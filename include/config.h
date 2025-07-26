@@ -1,12 +1,10 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <ESP32Servo.h>
 #include <NewPing.h>
 #include <vector>
 
 // Definición de pines
-#define SERVO_PIN 18
 #define TRIG_PIN 5
 #define ECHO_PIN 4
 
@@ -29,7 +27,6 @@
 // Constantes
 #define MAX_DISTANCE 200
 #define OBSTACLE_THRESHOLD 20
-#define SERVO_POSITIONS 8
 #define STACK_SIZE 5
 #define BASE_SPEED 150
 
@@ -41,7 +38,6 @@ enum Estado {
 };
 
 // Variables globales
-extern Servo servoMotor;
 extern NewPing sonar;
 
 extern Estado estadoActual;
@@ -51,10 +47,7 @@ extern bool sensorValues[6];
 extern std::vector<int> positionStack;
 extern int stackIndex;
 
-extern std::vector<float> distanceReadings;
-extern int distanceReadingIndex;
-extern int currentServoPos;
-extern int servoAngles[SERVO_POSITIONS];
+// Variables eliminadas: servo y barrido ya no son necesarios
 
 // Variables de control PD
 extern float Kp;

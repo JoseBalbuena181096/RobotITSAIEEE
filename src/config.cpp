@@ -1,7 +1,6 @@
 #include "config.h"
 
 // Variables globales
-Servo servoMotor;
 NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);
 
 Estado estadoActual = SEGUIR_LINEA;
@@ -11,11 +10,7 @@ bool sensorValues[6];
 std::vector<int> positionStack;
 int stackIndex = 0;
 
-std::vector<float> distanceReadings;
-int distanceReadingIndex = 0;
-int currentServoPos = 0;
-
-int servoAngles[SERVO_POSITIONS] = {30, 45, 60 , 75, 90, 105, 120, 135}; // 120 grados en 8 posiciones
+// Variables de servo eliminadas - ya no se usa barrido
 
 // Variables de control PD
 float Kp = 2.0;

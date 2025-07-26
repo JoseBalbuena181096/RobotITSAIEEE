@@ -17,7 +17,6 @@ void setup() {
 
 void loop() {
   leerSensores();
-  leerDistanciaConServo();
   
   switch (estadoActual) {
     case SEGUIR_LINEA:

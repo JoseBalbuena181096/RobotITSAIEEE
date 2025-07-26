@@ -4,42 +4,18 @@
 #include "sensores_linea.h"
 
 void setupObstaculos() {
-  servoMotor.attach(SERVO_PIN);
-  servoMotor.write(90); // Posición inicial
-  distanceReadings.reserve(SERVO_POSITIONS);
-}
-
-void agregarDistancia(float distancia) {
-  if (distanceReadings.size() < SERVO_POSITIONS) {
-    distanceReadings.push_back(distancia);
-  } else {
-    distanceReadings[distanceReadingIndex] = distancia;
-    distanceReadingIndex = (distanceReadingIndex + 1) % SERVO_POSITIONS;
-  }
-}
-
-void leerDistanciaConServo() {
-  servoMotor.write(servoAngles[currentServoPos]);
-  delay(100); // Esperar que el servo se mueva
-  
-  int distance = sonar.ping_cm();
-  if (distance == 0) distance = MAX_DISTANCE;
-  
-  agregarDistancia(distance);
-  
-  currentServoPos = (currentServoPos + 1) % SERVO_POSITIONS;
+  Serial.println("Sistema de obstáculos configurado - Ultrasonido fijo");
 }
 
 bool hayObstaculo() {
-  if (distanceReadings.empty()) return false;
+  int distance = sonar.ping_cm();
+  if (distance == 0) distance = MAX_DISTANCE;
   
-  float suma = 0;
-  for (float val : distanceReadings) {
-    suma += val;
-  }
+  Serial.print("Distancia: ");
+  Serial.print(distance);
+  Serial.println(" cm");
   
-  float promedio = suma / distanceReadings.size();
-  return promedio <= OBSTACLE_THRESHOLD;
+  return distance <= OBSTACLE_THRESHOLD;
 }
 
 bool buscarLinea() {

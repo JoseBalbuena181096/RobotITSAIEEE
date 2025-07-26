@@ -15,8 +15,15 @@
 Al finalizar este curso, los participantes serán capaces de:
 - Configurar el entorno de desarrollo con VS Code y PlatformIO
 - Implementar control PD para seguimiento de línea
-- Programar detección y esquive de obstáculos
+- Programar detección y esquive de obstáculos con ultrasonido fijo
 - Depurar y optimizar el comportamiento del robot
+
+### ⚠️ Nota Importante sobre el Sistema de Detección
+Este curso ha sido actualizado para usar un **sensor ultrasónico fijo** en lugar del sistema original con servo y barrido. Esta simplificación ofrece:
+- **Mayor velocidad**: Detección inmediata sin delays de servo
+- **Menor complejidad**: Menos código y componentes
+- **Mayor confiabilidad**: Menos partes móviles
+- **Menor consumo**: Sin motor servo activo
 
 ---
 
@@ -71,7 +78,6 @@ platform = espressif32
 board = esp32dev
 framework = arduino
 lib_deps = 
-    ESP32Servo
     NewPing
     
 monitor_speed = 115200
@@ -98,12 +104,10 @@ void loop() {
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <ESP32Servo.h>
 #include <NewPing.h>
 #include <vector>
 
 // Definición de pines
-#define SERVO_PIN 18
 #define TRIG_PIN 5
 #define ECHO_PIN 4
 
@@ -128,7 +132,6 @@ enum Estado {
 };
 
 extern Estado estadoActual;
-extern Servo servoMotor;
 extern NewPing sonar;
 
 #endif
@@ -330,47 +333,27 @@ void controlPD(int centroide) {
 
 ## 🕕 HORA 6: Detección de Obstáculos y Máquina de Estados
 
-### 6.1 Configuración del Sensor Ultrasónico y Servo (15 min)
+### 6.1 Configuración del Sensor Ultrasónico (15 min)
 ```cpp
 // En config.cpp
-Servo servoMotor;
 NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);
-
-int servoAngles[8] = {30, 45, 60, 75, 90, 105, 120, 135};
-std::vector<float> distanceReadings;
-int currentServoPos = 0;
 ```
 
 ### 6.2 Implementación de Detección de Obstáculos (20 min)
 ```cpp
 void setupObstaculos() {
-    servoMotor.attach(SERVO_PIN);
-    servoMotor.write(90);
-    distanceReadings.reserve(8);
-    Serial.println("Sistema de obstáculos configurado");
-}
-
-void leerDistanciaConServo() {
-    servoMotor.write(servoAngles[currentServoPos]);
-    delay(100);
-    
-    int distance = sonar.ping_cm();
-    if (distance == 0) distance = MAX_DISTANCE;
-    
-    agregarDistancia(distance);
-    currentServoPos = (currentServoPos + 1) % 8;
+    Serial.println("Sistema de obstáculos configurado - Ultrasonido fijo");
 }
 
 bool hayObstaculo() {
-    if (distanceReadings.empty()) return false;
+    int distance = sonar.ping_cm();
+    if (distance == 0) distance = MAX_DISTANCE;
     
-    float suma = 0;
-    for (float val : distanceReadings) {
-        suma += val;
-    }
+    Serial.print("Distancia: ");
+    Serial.print(distance);
+    Serial.println(" cm");
     
-    float promedio = suma / distanceReadings.size();
-    return promedio <= OBSTACLE_THRESHOLD;
+    return distance <= OBSTACLE_THRESHOLD;
 }
 ```
 
@@ -407,7 +390,6 @@ void esquivarObstaculo() {
 ```cpp
 void loop() {
     leerSensores();
-    leerDistanciaConServo();
     
     switch (estadoActual) {
         case SEGUIR_LINEA:
@@ -488,8 +470,8 @@ float Kp = 2.0;        // Respuesta proporcional
 float Kd = 1.0;        // Respuesta derivativa
 int BASE_SPEED = 150;  // Velocidad base
 
-// Detección
-int OBSTACLE_THRESHOLD = 20;  // Distancia de detección
+// Detección (Ultrasonido fijo)
+int OBSTACLE_THRESHOLD = 20;  // Distancia de detección en cm
 int MAX_DISTANCE = 200;       // Rango máximo sensor
 ```
 
@@ -507,7 +489,7 @@ int MAX_DISTANCE = 200;       // Rango máximo sensor
 - [ ] Control de motores funcional
 - [ ] Sensores de línea calibrados
 - [ ] Control PD implementado
-- [ ] Detección de obstáculos activa
+- [ ] Detección de obstáculos con ultrasonido fijo
 - [ ] Rutina de esquive funcional
 - [ ] Máquina de estados operativa
 
@@ -539,4 +521,4 @@ int MAX_DISTANCE = 200;       // Rango máximo sensor
 **Solución**:
 1. Ajustar altura sensores
 2. Calibrar umbral de detección
-3
+3. Verificar conexión con microcontrolador
