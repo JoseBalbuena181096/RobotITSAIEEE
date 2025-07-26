@@ -318,9 +318,48 @@ extern bool sensorValues[6];
 
 <div align="center">
 
-![Diagrama de Sensores](data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIEZvbmRvIC0tPgogIDxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjZjhmOWZhIiBzdHJva2U9IiNkZWUyZTYiIHN0cm9rZS13aWR0aD0iMiIvPgogIAogIDwhLS0gUm9ib3QgKHZpc3RhIHN1cGVyaW9yKSAtLT4KICA8cmVjdCB4PSIxNTAiIHk9IjEwMCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxMjAiIGZpbGw9IiM2Yzc1N2QiIHN0cm9rZT0iIzQ5NTA1NyIgc3Ryb2tlLXdpZHRoPSIyIiByeD0iMTAiLz4KICA8dGV4dCB4PSIyNTAiIHk9IjE2NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiPlJPQk9UPC90ZXh0PgogIAogIDwhLS0gU2Vuc29yZXMgVENSVDUwMDAgLS0+CiAgPGc+CiAgICA8IS0tIFNlbnNvciAwIC0tPgogICAgPGNpcmNsZSBjeD0iMTcwIiBjeT0iMjQwIiByPSI4IiBmaWxsPSIjMjhhNzQ1IiBzdHJva2U9IiMxZTdlMzQiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPHRleHQgeD0iMTcwIiB5PSIyNDUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iOCIgZm9udC13ZWlnaHQ9ImJvbGQiPlMwPC90ZXh0PgogICAgPHRleHQgeD0iMTcwIiB5PSIyNjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiMzMzMiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCI+LTU8L3RleHQ+CiAgICAKICAgIDwhLS0gU2Vuc29yIDEgLS0+CiAgICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyNDAiIHI9IjgiIGZpbGw9IiMyOGE3NDUiIHN0cm9rZT0iIzFlN2UzNCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgICA8dGV4dCB4PSIyMDAiIHk9IjI0NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI4IiBmb250LXdlaWdodD0iYm9sZCI+UzE8L3RleHQ+CiAgICA8dGV4dCB4PSIyMDAiIHk9IjI2MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzMzMyIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIj4tMzwvdGV4dD4KICAgIAogICAgPCEtLSBTZW5zb3IgMiAtLT4KICAgIDxjaXJjbGUgY3g9IjIzMCIgY3k9IjI0MCIgcj0iOCIgZmlsbD0iIzI4YTc0NSIgc3Ryb2tlPSIjMWU3ZTM0IiBzdHJva2Utd2lkdGg9IjIiLz4KICAgIDx0ZXh0IHg9IjIzMCIgeT0iMjQ1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjgiIGZvbnQtd2VpZ2h0PSJib2xkIj5TMjwvdGV4dD4KICAgIDx0ZXh0IHg9IjIzMCIgeT0iMjYwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMzMzIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTAiPi0xPC90ZXh0PgogICAgCiAgICA8IS0tIFNlbnNvciAzIC0tPgogICAgPGNpcmNsZSBjeD0iMjcwIiBjeT0iMjQwIiByPSI4IiBmaWxsPSIjMjhhNzQ1IiBzdHJva2U9IiMxZTdlMzQiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPHRleHQgeD0iMjcwIiB5PSIyNDUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iOCIgZm9udC13ZWlnaHQ9ImJvbGQiPlMzPC90ZXh0PgogICAgPHRleHQgeD0iMjcwIiB5PSIyNjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiMzMzMiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCI+KzE8L3RleHQ+CiAgICAKICAgIDwhLS0gU2Vuc29yIDQgLS0+CiAgICA8Y2lyY2xlIGN4PSIzMDAiIGN5PSIyNDAiIHI9IjgiIGZpbGw9IiMyOGE3NDUiIHN0cm9rZT0iIzFlN2UzNCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgICA8dGV4dCB4PSIzMDAiIHk9IjI0NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI4IiBmb250LXdlaWdodD0iYm9sZCI+UzQ8L3RleHQ+CiAgICA8dGV4dCB4PSIzMDAiIHk9IjI2MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzMzMyIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIj4rMzwvdGV4dD4KICAgIAogICAgPCEtLSBTZW5zb3IgNSAtLT4KICAgIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjI0MCIgcj0iOCIgZmlsbD0iIzI4YTc0NSIgc3Ryb2tlPSIjMWU3ZTM0IiBzdHJva2Utd2lkdGg9IjIiLz4KICAgIDx0ZXh0IHg9IjMzMCIgeT0iMjQ1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjgiIGZvbnQtd2VpZ2h0PSJib2xkIj5TNTwvdGV4dD4KICAgIDx0ZXh0IHg9IjMzMCIgeT0iMjYwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMzMzIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTAiPis1PC90ZXh0PgogIDwvZz4KICA8IS0tIEzDrW5lYSBuZWdyYSAtLT4KICA8cmVjdCB4PSIxMDAiIHk9IjI3MCIgd2lkdGg9IjMwMCIgaGVpZ2h0PSI4IiBmaWxsPSIjMjEyNTI5IiByeD0iMiIvPgogIDx0ZXh0IHg9IjI1MCIgeT0iMjkwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMzMzIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSJib2xkIj5Mw61uZWEgTmVncmE8L3RleHQ+Cjwvc3ZnPg==)
+**Diagrama de Posicionamiento de Sensores TCRT5000:**
 
-</div>
+```
+                    POSICIONAMIENTO DE SENSORES
+
+                    ┌─────────────────────┐
+                    │                     │
+                    │       ROBOT         │
+                    │     (Vista Top)     │
+                    │                     │
+                    └─────────────────────┘
+                            │
+                            ▼
+    ┌─────┬─────┬─────┬─────┬─────┐
+    │ S0  │ S1  │ S2  │ S3  │ S4  │  ◄── Sensores TCRT5000
+    │(-5) │(-3) │(-1) │(+1) │(+3) │  ◄── Pesos para centroide
+    └─────┴─────┴─────┴─────┴─────┘
+            ▲
+            │
+    ████████████████████████████████  ◄── Línea Negra
+
+    Distribución de Sensores:
+    • S0 (Extremo Izquierdo): Peso -5
+    • S1 (Izquierda):         Peso -3
+    • S2 (Centro):            Peso -1
+    • S3 (Derecha):           Peso +1
+    • S4 (Extremo Derecho):   Peso +3
+
+    Cálculo del Centroide:
+    Centroide = Σ(Sensor_i × Peso_i) / Σ(Sensor_i)
+
+    Ejemplos de Detección:
+    ┌─────────────────┬──────────────┬─────────────┐
+    │ Sensores Activos│ Centroide    │ Acción      │
+    ├─────────────────┼──────────────┼─────────────┤
+    │ S2              │ -1           │ Centrado    │
+    │ S1, S2          │ -2           │ Giro Derecha│
+    │ S2, S3          │ 0            │ Centrado    │
+    │ S3, S4          │ +2           │ Giro Izq.   │
+    │ S0              │ -5           │ Giro Fuerte │
+    └─────────────────┴──────────────┴─────────────┘
+```
 
 **Alternativa de visualización:**
 
