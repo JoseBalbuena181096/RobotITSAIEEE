@@ -1,4 +1,5 @@
 # Curso: Robot Seguidor de Línea con Esquiva Obstáculos
+
 ## Duración: 6 Horas | Modalidad: Práctica con ESP32
 
 ---
@@ -6,20 +7,25 @@
 ## 📋 Información General
 
 ### Requisitos Previos
+
 - ✅ Conocimientos básicos de programación en C++
 - ✅ Familiaridad con funciones y estructuras de control
 - ✅ Robot ya armado y listo para programar
 - ✅ Componentes instalados y conectados
 
 ### Objetivos del Curso
+
 Al finalizar este curso, los participantes serán capaces de:
+
 - Configurar el entorno de desarrollo con VS Code y PlatformIO
 - Implementar control PD para seguimiento de línea
 - Programar detección y esquive de obstáculos con ultrasonido fijo
 - Depurar y optimizar el comportamiento del robot
 
 ### ⚠️ Nota Importante sobre el Sistema de Detección
+
 Este curso ha sido actualizado para usar un **sensor ultrasónico fijo** en lugar del sistema original con servo y barrido. Esta simplificación ofrece:
+
 - **Mayor velocidad**: Detección inmediata sin delays de servo
 - **Menor complejidad**: Menos código y componentes
 - **Mayor confiabilidad**: Menos partes móviles
@@ -27,51 +33,28 @@ Este curso ha sido actualizado para usar un **sensor ultrasónico fijo** en luga
 
 ### 📊 Diagrama General del Sistema
 
-**Arquitectura del Sistema de Control:**
+![Diagrama general del sistema](image.png)
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                Robot Seguidor de Línea                     │
-│            Sistema Simplificado con Ultrasonido Fijo       │
-└─────────────────────────────────────────────────────────────┘
+**Conexiones del Sistema:**
 
-    Motor Izq        L298N         Motor Der
-   ┌─────────┐    ┌─────────┐    ┌─────────┐
-   │ Motor   │◄───┤ Driver  │───►│ Motor   │
-   │ Izq     │    │ Motores │    │ Der     │
-   └─────────┘    └────┬────┘    └─────────┘
-                       │
-                       ▼
-                  ┌─────────┐
-                  │  ESP32  │
-                  │ Control │
-                  └────┬────┘
-                       │
-        ┌──────────────┼──────────────┐
-        │              │              │
-        ▼              ▼              ▼
-┌─────────────┐ ┌─────────────┐ ┌─────────────┐
-│6 Sensores   │ │  HC-SR04    │ │ Alimentación│
-│TCRT5000     │ │ (Fijo)      │ │   7V BAT    │
-│Línea Negra  │ │ Obstáculos  │ │             │
-└─────────────┘ └─────────────┘ └─────────────┘
-
-Conexiones:
-• ESP32 → L298N: ENA(14), IN1(27), IN2(26), ENB(12), IN3(25), IN4(33)
-• ESP32 → HC-SR04: TRIG(5), ECHO(4)
-• ESP32 → Sensores: S0(36), S1(39), S2(34), S3(35), S4(32), S5(23)
-```
+| Componente | Pines ESP32            | Función                 |
+| ---------- | ---------------------- | ----------------------- |
+| L298N      | 14, 27, 26, 12, 25, 33 | Control de motores      |
+| HC-SR04    | 5 (TRIG), 4 (ECHO)     | Detección de obstáculos |
+| TCRT5000   | 36, 39, 34, 35, 32, 23 | Sensores de línea       |
 
 ---
 
 ## 🕐 HORA 1: Configuración del Entorno de Desarrollo
 
 ### 1.1 Instalación de Visual Studio Code (15 min)
+
 1. Descargar VS Code desde https://code.visualstudio.com/
 2. Instalar con configuración por defecto
 3. Abrir VS Code y familiarizarse con la interfaz
 
 ### 1.2 Instalación de PlatformIO (20 min)
+
 1. Ir a Extensions (Ctrl+Shift+X)
 2. Buscar "PlatformIO IDE"
 3. Instalar la extensión oficial
@@ -79,11 +62,13 @@ Conexiones:
 5. Verificar que aparezca el icono de PlatformIO
 
 ### 1.3 Instalación de Gemini Code Assist (15 min)
+
 1. Buscar "Gemini Code Assist" en Extensions
 2. Instalar y configurar con cuenta de Google
 3. Probar funcionalidad básica con comentarios
 
 ### 1.4 Crear Proyecto del Robot (10 min)
+
 ```bash
 # Crear nuevo proyecto PlatformIO
 1. Click en PlatformIO Home
@@ -101,7 +86,9 @@ Conexiones:
 ## 🕑 HORA 2: Configuración Inicial y Pruebas Básicas
 
 ### 2.1 Configuración del Proyecto (15 min)
+
 1. Crear estructura de archivos:
+
    - `src/main.cpp`
    - `src/config.h`
    - `src/config.cpp`
@@ -109,18 +96,20 @@ Conexiones:
    - `src/motores.cpp`
 
 2. Configurar `platformio.ini`:
+
 ```ini
 [env:esp32dev]
 platform = espressif32
 board = esp32dev
 framework = arduino
-lib_deps = 
+lib_deps =
     NewPing
-    
+
 monitor_speed = 115200
 ```
 
 ### 2.2 Prueba de Conexión ESP32 (15 min)
+
 ```cpp
 // Código de prueba básico
 #include <Arduino.h>
@@ -136,11 +125,7 @@ void loop() {
 }
 ```
 
-### 2.3 Implementación del Archivo config.h (15 min)
-
-#### 📋 Diagrama de Pines del ESP32
-
-**Configuración de Pines ESP32 DevKit V1:**
+### 2.3 Diagrama de Pines del ESP32
 
 ```
                     ESP32 DevKit V1
@@ -186,7 +171,30 @@ Asignación de Pines:
 └─────────────┴─────────┴──────────────────────┘
 ```
 
-### 2.3 Implementación del Archivo config.h (15 min)
+**Tabla de Asignación de Pines:**
+
+| Función               | GPIO   | Descripción         |
+| --------------------- | ------ | ------------------- |
+| **Ultrasonido**       |
+| Echo                  | GPIO4  | Entrada de señal    |
+| Trigger               | GPIO5  | Salida de pulso     |
+| **L298N Motores**     |
+| ENA                   | GPIO14 | PWM Motor Izquierdo |
+| IN1                   | GPIO27 | Dirección Motor Izq |
+| IN2                   | GPIO26 | Dirección Motor Izq |
+| ENB                   | GPIO12 | PWM Motor Derecho   |
+| IN3                   | GPIO25 | Dirección Motor Der |
+| IN4                   | GPIO33 | Dirección Motor Der |
+| **Sensores TCRT5000** |
+| S0                    | GPIO36 | Sensor Izquierda    |
+| S1                    | GPIO39 | Sensor Izq-Centro   |
+| S2                    | GPIO34 | Sensor Centro-Izq   |
+| S3                    | GPIO35 | Sensor Centro-Der   |
+| S4                    | GPIO32 | Sensor Derecha      |
+| S5                    | GPIO23 | Sensor Extremo Der  |
+
+### 2.4 Implementación del Archivo config.h (15 min)
+
 ```cpp
 #ifndef CONFIG_H
 #define CONFIG_H
@@ -224,7 +232,8 @@ extern NewPing sonar;
 #endif
 ```
 
-### 2.4 Prueba de Motores (15 min)
+### 2.5 Prueba de Motores (15 min)
+
 **Ejercicio**: Implementar funciones básicas de movimiento y probar cada motor individualmente.
 
 ---
@@ -232,6 +241,7 @@ extern NewPing sonar;
 ## 🕒 HORA 3: Implementación del Control de Motores
 
 ### 3.1 Desarrollo de motores.cpp (20 min)
+
 ```cpp
 #include "config.h"
 #include "motores.h"
@@ -243,7 +253,7 @@ void setupMotores() {
     pinMode(ENB, OUTPUT);
     pinMode(IN3, OUTPUT);
     pinMode(IN4, OUTPUT);
-    
+
     Serial.println("Motores configurados");
 }
 
@@ -258,7 +268,7 @@ void moverMotores(int velocidadIzq, int velocidadDer) {
         velocidadIzq = -velocidadIzq;
     }
     analogWrite(ENA, velocidadIzq);
-    
+
     // Motor derecho
     if (velocidadDer > 0) {
         digitalWrite(IN3, HIGH);
@@ -282,13 +292,16 @@ void detenerMotores() {
 ```
 
 ### 3.2 Pruebas de Movimiento (25 min)
+
 **Ejercicios Prácticos**:
+
 1. **Prueba 1**: Movimiento hacia adelante 2 segundos
 2. **Prueba 2**: Giros izquierda y derecha
 3. **Prueba 3**: Movimiento en cuadrado
 4. **Prueba 4**: Calibración de velocidades
 
 ### 3.3 Depuración y Ajustes (15 min)
+
 - Verificar dirección de rotación
 - Ajustar velocidades si es necesario
 - Calibrar diferencias entre motores
@@ -298,6 +311,7 @@ void detenerMotores() {
 ## 🕓 HORA 4: Sensores de Línea y Control PD
 
 ### 4.1 Configuración de Sensores TCRT5000 (20 min)
+
 ```cpp
 // En config.h - agregar
 #define SENSOR_0 36
@@ -312,111 +326,40 @@ extern int sensorWeights[6];
 extern bool sensorValues[6];
 ```
 
-### 4.2 Implementación de sensores_linea.cpp (25 min)
+### 4.2 Diagrama de Posicionamiento de Sensores
 
-#### 📍 Diagrama de Posicionamiento de Sensores
+![Diagrama de posicionamiento de sensores](image-1.png)
 
-<div align="center">
+**Tabla de Configuración de Sensores:**
 
-**Diagrama de Posicionamiento de Sensores TCRT5000:**
+| Sensor | GPIO | Posición          | Peso | Función                     |
+| ------ | ---- | ----------------- | ---- | --------------------------- |
+| S0     | 36   | Extremo Izquierdo | -5   | Detección lateral izquierda |
+| S1     | 39   | Izquierda         | -3   | Corrección izquierda        |
+| S2     | 34   | Centro-Izquierda  | -1   | Centrado fino izquierda     |
+| S3     | 35   | Centro-Derecha    | +1   | Centrado fino derecha       |
+| S4     | 32   | Derecha           | +3   | Corrección derecha          |
+| S5     | 23   | Extremo Derecho   | +5   | Detección lateral derecha   |
 
-```
-                    POSICIONAMIENTO DE SENSORES
-
-                    ┌─────────────────────┐
-                    │                     │
-                    │       ROBOT         │
-                    │     (Vista Top)     │
-                    │                     │
-                    └─────────────────────┘
-                            │
-                            ▼
-    ┌─────┬─────┬─────┬─────┬─────┐
-    │ S0  │ S1  │ S2  │ S3  │ S4  │  ◄── Sensores TCRT5000
-    │(-5) │(-3) │(-1) │(+1) │(+3) │  ◄── Pesos para centroide
-    └─────┴─────┴─────┴─────┴─────┘
-            ▲
-            │
-    ████████████████████████████████  ◄── Línea Negra
-
-    Distribución de Sensores:
-    • S0 (Extremo Izquierdo): Peso -5
-    • S1 (Izquierda):         Peso -3
-    • S2 (Centro):            Peso -1
-    • S3 (Derecha):           Peso +1
-    • S4 (Extremo Derecho):   Peso +3
-
-    Cálculo del Centroide:
-    Centroide = Σ(Sensor_i × Peso_i) / Σ(Sensor_i)
-
-    Ejemplos de Detección:
-    ┌─────────────────┬──────────────┬─────────────┐
-    │ Sensores Activos│ Centroide    │ Acción      │
-    ├─────────────────┼──────────────┼─────────────┤
-    │ S2              │ -1           │ Centrado    │
-    │ S1, S2          │ -2           │ Giro Derecha│
-    │ S2, S3          │ 0            │ Centrado    │
-    │ S3, S4          │ +2           │ Giro Izq.   │
-    │ S0              │ -5           │ Giro Fuerte │
-    └─────────────────┴──────────────┴─────────────┘
-```
-
-**Alternativa de visualización:**
+**Cálculo del Centroide:**
 
 ```
-     ROBOT (Vista Superior)
-    ┌─────────────────────┐
-    │                     │
-    │       ROBOT         │
-    │                     │
-    └─────────────────────┘
-         │ │ │   │ │ │
-        S0 S1 S2 S3 S4 S5
-        -5 -3 -1 +1 +3 +5
-    ═══════════════════════
-         Línea Negra
+Centroide = Σ(Sensor_i × Peso_i) / Σ(Sensor_i)
 ```
 
-**Diagrama de Posicionamiento de Sensores TCRT5000:**
+**Ejemplos de Detección:**
 
-```
-                    ROBOT (Vista Superior)
-                 ┌─────────────────────┐
-                 │                     │
-                 │       ROBOT         │
-                 │                     │
-                 └─────────────────────┘
-                      │ │ │   │ │ │
-                     S0 S1 S2 S3 S4 S5
-                     -5 -3 -1 +1 +3 +5
-                 ═══════════════════════
-                      Línea Negra
+| Sensores Activos | Centroide | Acción                 |
+| ---------------- | --------- | ---------------------- |
+| S2               | -1        | Robot centrado         |
+| S1, S2           | -2        | Giro suave derecha     |
+| S2, S3           | 0         | Perfectamente centrado |
+| S3, S4           | +2        | Giro suave izquierda   |
+| S0               | -5        | Giro fuerte derecha    |
+| S5               | +5        | Giro fuerte izquierda  |
 
-    Dirección de Avance: ↑
+### 4.3 Implementación de sensores_linea.cpp (25 min)
 
-    Pesos de Sensores:
-    • Izquierda: S0(-5), S1(-3), S2(-1)
-    • Centro: Entre S2 y S3 (Centroide = 0)
-    • Derecha: S3(+1), S4(+3), S5(+5)
-
-    Configuración de Pines:
-    ┌────────┬─────────┬──────────────┐
-    │ Sensor │ GPIO    │ Peso         │
-    ├────────┼─────────┼──────────────┤
-    │ S0     │ GPIO36  │ -5 (Izq)     │
-    │ S1     │ GPIO39  │ -3           │
-    │ S2     │ GPIO34  │ -1           │
-    │ S3     │ GPIO35  │ +1           │
-    │ S4     │ GPIO32  │ +3           │
-    │ S5     │ GPIO23  │ +5 (Der)     │
-    └────────┴─────────┴──────────────┘
-
-    Funcionamiento:
-    • Sensor activo (1): Detecta línea negra
-    • Sensor inactivo (0): Detecta superficie blanca
-    • Centroide = Σ(Peso × Estado) / Σ(Estados activos)
-```
-```
 ```cpp
 #include "config.h"
 #include "sensores_linea.h"
@@ -444,8 +387,10 @@ void mostrarSensores() {
 }
 ```
 
-### 4.3 Pruebas de Sensores (15 min)
+### 4.4 Pruebas de Sensores (15 min)
+
 **Ejercicios**:
+
 1. **Prueba 1**: Lectura individual de cada sensor
 2. **Prueba 2**: Detección de línea negra
 3. **Prueba 3**: Respuesta en diferentes posiciones
@@ -454,85 +399,61 @@ void mostrarSensores() {
 
 ## 🕔 HORA 5: Implementación del Control PD
 
-### 5.1 Comprensión del Control PD (15 min)
+### 5.1 Diagrama del Sistema de Control PD
 
-#### 📈 Diagrama del Control PD
+![Diagrama del sistema de control PD](image-2.png)
 
-**Diagrama de Bloques del Sistema de Control:**
+**Parámetros del Control PD:**
 
-```
-┌─────────┐   ┌───┐   ┌──────────┐   ┌─────────┐   ┌─────────┐
-│ REF=0   │──▶│ Σ │──▶│    PD    │──▶│  ROBOT  │──▶│ SENSOR  │
-│(Centro) │   │   │   │ Kp + Kd  │   │ Motores │   │Centroide│
-└─────────┘   └─┬─┘   └──────────┘   └─────────┘   └────┬────┘
-                ▲                                        │
-                │                                        │
-                └────────────────────────────────────────┘
-                           Retroalimentación
-
-Flujo de Señales:
-• Error = Referencia - Posición_Actual
-• Corrección = Kp × Error + Kd × (Error - Error_anterior)
-• Velocidades = Velocidad_Base ± Corrección
-
-Parámetros de Control:
-┌─────────────┬─────────┬──────────────────────┐
-│ Parámetro   │ Valor   │ Función              │
-├─────────────┼─────────┼──────────────────────┤
-│ Kp          │ 15.0    │ Respuesta rápida     │
-│ Kd          │ 8.0     │ Estabilidad          │
-│ BASE_SPEED  │ 150     │ Velocidad base       │
-│ Referencia  │ 0       │ Centro de línea      │
-└─────────────┴─────────┴──────────────────────┘
-```
-
-**Fórmulas del Control PD:**
-
-**Teoría**:
-- Error = Referencia - Posición actual
-- Salida = Kp × Error + Kd × (Error - Error_anterior)
-- Aplicación al seguimiento de línea
+| Parámetro  | Valor | Función                            |
+| ---------- | ----- | ---------------------------------- |
+| Kp         | 15.0  | Respuesta proporcional (velocidad) |
+| Kd         | 8.0   | Respuesta derivativa (estabilidad) |
+| BASE_SPEED | 150   | Velocidad base de avance           |
+| Referencia | 0     | Centro de la línea                 |
 
 ### 5.2 Implementación del Cálculo de Centroide (20 min)
+
 ```cpp
 int calcularCentroide() {
     int suma = 0;
     int count = 0;
-    
+
     for (int i = 0; i < 6; i++) {
         if (sensorValues[i]) {
             suma += sensorWeights[i];
             count++;
         }
     }
-    
+
     if (count == 0) {
         return obtenerPromedioStack();
     }
-    
+
     agregarAlStack(suma);
     return suma;
 }
 ```
 
 ### 5.3 Implementación del Control PD (25 min)
+
 ```cpp
 void controlPD(int centroide) {
     unsigned long currentTime = millis();
     float deltaTime = (currentTime - previousTime) / 1000.0;
-    
+
     float error = 0 - centroide;
     float derivative = (error - previousError) / deltaTime;
-    
+
     float output = Kp * error + Kd * derivative;
-    
+
     int baseSpeed = BASE_SPEED;
     int leftSpeed = baseSpeed + output;
     int rightSpeed = baseSpeed - output;
-    
+
     leftSpeed = constrain(leftSpeed, 0, 255);
     rightSpeed = constrain(rightSpeed, 0, 255);
-    
+
     // Control de histéresis
     if (error >= 20) {
         moverMotores(0, 200);
@@ -541,13 +462,14 @@ void controlPD(int centroide) {
     } else {
         moverMotores(leftSpeed, rightSpeed);
     }
-    
+
     previousError = error;
     previousTime = currentTime;
 }
 ```
 
 **Ejercicios Prácticos**:
+
 1. **Calibración de Kp**: Ajustar respuesta proporcional
 2. **Calibración de Kd**: Ajustar respuesta derivativa
 3. **Prueba en línea recta**: Verificar seguimiento
@@ -558,65 +480,26 @@ void controlPD(int centroide) {
 ## 🕕 HORA 6: Detección de Obstáculos y Máquina de Estados
 
 ### 6.1 Configuración del Sensor Ultrasónico (15 min)
+
 ```cpp
 // En config.cpp
 NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);
 ```
 
-### 6.2 Implementación de Detección de Obstáculos (20 min)
+### 6.2 Diagrama del Sistema de Detección Ultrasónica
 
-#### 🎯 Diagrama de Detección Ultrasónica
+![Diagrama del sistema de detección ultrasónica](image-3.png)
 
-**Sistema de Detección Ultrasónica Fija HC-SR04:**
+**Ventajas del Sistema Fijo:**
 
-```
-                    DETECCIÓN ULTRASÓNICA FIJA
+- ✅ Detección inmediata (sin delays de servo)
+- ✅ Mayor velocidad de respuesta
+- ✅ Menor complejidad de código
+- ✅ Menor consumo energético
+- ✅ Mayor confiabilidad
 
-    ┌─────────┐    ┌─────────┐                    ┌─────────┐
-    │  ROBOT  │────│ HC-SR04 │)))))))))))))))))))│OBSTÁCULO│
-    │         │    │ (Fijo)  │                    │         │
-    └─────────┘    └─────────┘                    └─────────┘
-                        │                              │
-                        │◄─────── 20 cm ──────────────┤
-                        │        (Umbral)              │
-                        │                              │
-                        │◄────── 200 cm ──────────────┤
-                        │       (Máximo)               │
+### 6.3 Implementación de Detección de Obstáculos (20 min)
 
-    Funcionamiento:
-    1. TRIGGER: Envía pulso ultrasónico (10μs)
-    2. ECHO: Recibe eco reflejado del obstáculo
-    3. Cálculo: Distancia = (Tiempo × Velocidad_Sonido) / 2
-    4. Decisión: Si distancia ≤ 20cm → OBSTÁCULO DETECTADO
-
-    Campo de Detección:
-                    ╱─────────────╲
-                   ╱               ╲
-    [ROBOT]───────╱     ZONA DE     ╲
-                 ╱     DETECCIÓN     ╲
-                ╱      (Fijo)        ╲
-               ╱_____________________╲
-
-    Ventajas del Sistema Fijo:
-    • Detección inmediata (sin delays de servo)
-    • Mayor velocidad de respuesta
-    • Menor complejidad de código
-    • Menor consumo energético
-    • Mayor confiabilidad
-
-    Configuración de Pines:
-    ┌─────────┬─────────┬──────────────────┐
-    │ Señal   │ GPIO    │ Función          │
-    ├─────────┼─────────┼──────────────────┤
-    │ TRIGGER │ GPIO5   │ Envío de pulso   │
-    │ ECHO    │ GPIO4   │ Recepción de eco │
-    └─────────┴─────────┴──────────────────┘
-
-    Parámetros:
-    • Umbral de detección: 20 cm
-    • Alcance máximo: 200 cm
-    • Ángulo de detección: ~15° (campo fijo)
-```
 ```cpp
 void setupObstaculos() {
     Serial.println("Sistema de obstáculos configurado - Ultrasonido fijo");
@@ -625,107 +508,34 @@ void setupObstaculos() {
 bool hayObstaculo() {
     int distance = sonar.ping_cm();
     if (distance == 0) distance = MAX_DISTANCE;
-    
+
     Serial.print("Distancia: ");
     Serial.print(distance);
     Serial.println(" cm");
-    
+
     return distance <= OBSTACLE_THRESHOLD;
 }
 ```
 
-### 6.3 Implementación de la Rutina de Esquive (15 min)
+### 6.4 Diagrama de la Rutina de Esquive
 
-#### 🔄 Diagrama de Flujo de Esquive
+![Diagrama de la rutina de esquive](image-4.png)
 
-```
-                    RUTINA DE ESQUIVE POR DERECHA
+**Tabla de Parámetros de Esquive:**
 
-                        ┌─────────────────┐
-                        │   OBSTÁCULO     │
-                        │   DETECTADO     │
-                        └─────────┬───────┘
-                                  │
-                                  ▼
-                        ┌─────────────────┐
-                        │     FASE 0      │
-                        │ Giro Izquierda  │
-                        │    (3 seg)      │
-                        │  (-150, 150)    │
-                        └─────────┬───────┘
-                                  │
-                                  ▼
-                        ┌─────────────────┐
-                        │     FASE 1      │
-                        │    Avanzar      │
-                        │    (5 seg)      │
-                        │  (150, 150)     │
-                        └─────────┬───────┘
-                                  │
-                                  ▼
-                        ┌─────────────────┐
-                        │     FASE 2      │
-                        │ Giro Derecha    │
-                        │    (3 seg)      │
-                        │  (150, -150)    │
-                        └─────────┬───────┘
-                                  │
-                                  ▼
-                        ┌─────────────────┐
-                        │     FASE 3      │
-                        │    Avanzar      │
-                        │    (3 seg)      │
-                        │  (150, 150)     │
-                        └─────────┬───────┘
-                                  │
-                                  ▼
-                        ┌─────────────────┐
-                        │   BUSCAR        │
-                        │   LÍNEA         │
-                        └─────────────────┘
+| Fase | Acción   | Duración | Motor Izq | Motor Der | Descripción               |
+| ---- | -------- | -------- | --------- | --------- | ------------------------- |
+| 0    | Giro Izq | 3 seg    | -150      | 150       | Alejarse del obstáculo    |
+| 1    | Avanzar  | 5 seg    | 150       | 150       | Rodear el obstáculo       |
+| 2    | Giro Der | 3 seg    | 150       | -150      | Orientarse hacia la línea |
+| 3    | Avanzar  | 3 seg    | 150       | 150       | Retornar a la línea       |
 
-    Trayectoria del Robot:
-    
-    Línea ────────[■]──────── (■ = Obstáculo)
-    Original      │
-                  │
-                  ▼
-              ┌───┐
-              │ 1 │ Giro izquierda
-              └─┬─┘
-                │
-                ▼
-              ┌───┐
-              │ 2 │ Avanzar (rodear)
-              └─┬─┘
-                │
-                ▼
-              ┌───┐
-              │ 3 │ Giro derecha
-              └─┬─┘
-                │
-                ▼
-              ┌───┐
-              │ 4 │ Avanzar (retornar)
-              └─┬─┘
-                │
-                ▼
-    Línea ──────────────────
-    Retomada
-```
+### 6.5 Implementación de la Rutina de Esquive (15 min)
 
-**Parámetros de la Rutina:**
-
-| Fase | Acción | Duración | Motor Izq | Motor Der | Descripción |
-|------|--------|----------|-----------|-----------|-------------|
-| 0 | Giro Izq | 3 seg | -150 | 150 | Alejarse del obstáculo |
-| 1 | Avanzar | 5 seg | 150 | 150 | Rodear el obstáculo |
-| 2 | Giro Der | 3 seg | 150 | -150 | Orientarse hacia la línea |
-| 3 | Avanzar | 3 seg | 150 | 150 | Retornar a la línea |
 ```cpp
 void esquivarObstaculo() {
     unsigned long tiempoActual = millis();
-    
+
     switch (faseEsquivar) {
         case 0: // Giro izquierda 3 segundos
             if (tiempoActual - tiempoEsquivar < 3000) {
@@ -735,7 +545,7 @@ void esquivarObstaculo() {
                 tiempoEsquivar = tiempoActual;
             }
             break;
-            
+
         case 1: // Adelante 5 segundos
             if (tiempoActual - tiempoEsquivar < 5000) {
                 moverMotores(150, 150);
@@ -744,81 +554,31 @@ void esquivarObstaculo() {
                 tiempoEsquivar = tiempoActual;
             }
             break;
-            
+
         // ... continuar con las demás fases
     }
 }
 ```
 
-### 6.4 Integración Final y Máquina de Estados (10 min)
+### 6.6 Máquina de Estados del Robot
 
-#### 🔄 Diagrama de Estados del Robot
+![Máquina de Estados del Robot](image-7.png)
 
-**Estados del Robot y Transiciones:**
+**Condiciones de Transición:**
 
-```
-                    Máquina de Estados del Robot
+| Estado Actual      | Condición         | Estado Siguiente   |
+| ------------------ | ----------------- | ------------------ |
+| SEGUIR_LINEA       | Sin obstáculo     | SEGUIR_LINEA       |
+| SEGUIR_LINEA       | Obstáculo ≤ 20cm  | ESQUIVAR_OBSTACULO |
+| ESQUIVAR_OBSTACULO | Maniobra completa | BUSCAR_LINEA       |
+| BUSCAR_LINEA       | Línea detectada   | SEGUIR_LINEA       |
 
-                           Sin obstáculo
-                        ┌─────────────────┐
-                        │                 │
-                        ▼                 │
-                 ┌─────────────────┐      │
-                 │   SEGUIR_LINEA  │──────┘
-                 │                 │
-                 │ • Control PD    │
-                 │ • Verificar     │
-                 │   obstáculos    │
-                 └─────────┬───────┘
-                           │
-                           │ Obstáculo detectado
-                           │ (distancia ≤ 20cm)
-                           ▼
-                 ┌─────────────────┐
-                 │ESQUIVAR_OBSTACULO│
-                 │                 │
-                 │ • Giro izquierda│
-                 │ • Avanzar       │
-                 │ • Giro derecha  │
-                 │ • Avanzar       │
-                 └─────────┬───────┘
-                           │
-                           │ Maniobra completada
-                           ▼
-                 ┌─────────────────┐
-                 │  BUSCAR_LINEA   │
-                 │                 │
-                 │ • Avanzar       │
-                 │ • Buscar línea  │
-                 │ • Sensores      │
-                 └─────────┬───────┘
-                           │
-                           │ Línea encontrada
-                           │ (sensores activos)
-                           │
-                           └─────────────────┐
-                                             │
-                                             ▼
-                                    ┌─────────────────┐
-                                    │   SEGUIR_LINEA  │
-                                    │     (Inicio)    │
-                                    └─────────────────┘
+### 6.7 Integración Final y Máquina de Estados (10 min)
 
-Condiciones de Transición:
-┌─────────────────┬──────────────────┬─────────────────────┐
-│ Estado Actual   │ Condición        │ Estado Siguiente    │
-├─────────────────┼──────────────────┼─────────────────────┤
-│ SEGUIR_LINEA    │ Sin obstáculo    │ SEGUIR_LINEA        │
-│ SEGUIR_LINEA    │ Obstáculo ≤ 20cm│ ESQUIVAR_OBSTACULO  │
-│ ESQUIVAR_OBST.  │ Maniobra completa│ BUSCAR_LINEA        │
-│ BUSCAR_LINEA    │ Línea detectada  │ SEGUIR_LINEA        │
-│ BUSCAR_LINEA    │ Sensores activos │ SEGUIR_LINEA        │
-└─────────────────┴──────────────────┴─────────────────────┘
-```
 ```cpp
 void loop() {
     leerSensores();
-    
+
     switch (estadoActual) {
         case SEGUIR_LINEA:
             if (hayObstaculo()) {
@@ -830,11 +590,11 @@ void loop() {
                 controlPD(centroide);
             }
             break;
-            
+
         case ESQUIVAR_OBSTACULO:
             esquivarObstaculo();
             break;
-            
+
         case BUSCAR_LINEA:
             if (buscarLinea()) {
                 estadoActual = SEGUIR_LINEA;
@@ -843,152 +603,41 @@ void loop() {
             }
             break;
     }
-    
+
     delay(50);
 }
 ```
 
 ---
 
-## 📊 Diagramas Adicionales de Referencia
+## 📊 Diagramas de Referencia Adicionales
 
 ### 🔧 Diagrama de Conexiones Hardware
 
-**Esquema de Conexiones del Robot:**
+![Diagrama de Conexiones Hardware](image-5.png)
 
-```
-                    ┌─────────────┐
-                    │   7V BAT   │ ──────┐
-                    └─────────────┘       │
-                                          │ (Alimentación)
-    ┌────┐     ┌─────────────────┐       │
-    │ M1 │◄────┤     L298N       │◄──────┤
-    └────┘     │  Driver Motores │       │
-               │                 │       │
-    ┌────┐     │                 │       │
-    │ M2 │◄────┤                 │       │
-    └────┘     └─────────┬───────┘       │
-                         │               │
-                         │ (ENA,IN1,IN2, │
-                         │  ENB,IN3,IN4) │
-                         ▼               │
-               ┌─────────────────┐       │
-               │     ESP32       │       │
-               │   DevKit V1     │◄──────┘
-               │                 │
-               │  GPIO Pins:     │
-               │  • 5,4: HC-SR04 │
-               │  • 36,39,34,35, │
-               │    32,23: TCRT  │
-               │  • 27,26,25,33: │
-               │    L298N        │
-               └─────┬───────────┘
-                     │
-                     ├─────────► ┌─────────────┐
-                     │           │   HC-SR04   │
-                     │           │ Ultrasonido │
-                     │           └─────────────┘
-                     │
-                     └─────────► ┌─────────────────────┐
-                                 │  6x TCRT5000        │
-                                 │  Sensores de Línea  │
-                                 └─────────────────────┘
+### 🔄 Diagrama de Flujo Principal
 
-Conexiones Específicas:
-• ESP32 Pin 27 → L298N ENA
-• ESP32 Pin 26 → L298N IN1  
-• ESP32 Pin 25 → L298N IN2
-• ESP32 Pin 33 → L298N ENB
-• ESP32 Pin 32 → L298N IN3
-• ESP32 Pin 23 → L298N IN4
-• ESP32 Pin 5  → HC-SR04 TRIG
-• ESP32 Pin 4  → HC-SR04 ECHO
-• ESP32 Pins 36,39,34,35,32,23 → TCRT5000 (S0-S5)
-```
-
-### 🔄 Diagrama de Flujo Principal del Programa
-
-**Flujo de Ejecución del Robot:**
-
-```
-                    ┌─────────────┐
-                    │   INICIO    │
-                    └──────┬──────┘
-                           │
-                           ▼
-                    ┌─────────────┐
-                    │   SETUP()   │
-                    │ • Motores   │
-                    │ • Sensores  │
-                    │ • Obstáculos│
-                    └──────┬──────┘
-                           │
-                           ▼
-              ┌─────────────────────┐
-              │   Leer Sensores     │
-              │ • leerSensores()    │
-              │ • calcularCentroide │
-              └──────────┬──────────┘
-                         │
-                         ▼
-                    ┌─────────┐
-                    │ Estado? │
-                    └────┬────┘
-                         │
-        ┌────────────────┼────────────────┐
-        │                │                │
-        ▼                ▼                ▼
- ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
- │ SEGUIR_LINEA│ │ESQUIVAR_OBST│ │BUSCAR_LINEA │
- └──────┬──────┘ └─────────────┘ └─────────────┘
-        │
-        ▼
-   ┌─────────┐
-   │Obstáculo│ ──NO──┐
-   │   ?     │       │
-   └────┬────┘       │
-        │SÍ          │
-        ▼            ▼
- ┌─────────────┐ ┌─────────────┐
- │ Cambiar a   │ │ Control PD  │
- │ ESQUIVAR_   │ │ • Calcular  │
- │ OBSTACULO   │ │ • Aplicar   │
- └─────────────┘ └──────┬──────┘
-                        │
-                        ▼
-                 ┌─────────────┐
-                 │ Delay(50ms) │
-                 └──────┬──────┘
-                        │
-                        └──────────┐
-                                   │
-                                   ▼
-                        ┌─────────────────┐
-                        │ Volver al Inicio│
-                        │   (Bucle Loop)  │
-                        └─────────────────┘
-
-Estados del Robot:
-• SEGUIR_LINEA: Sigue la línea usando control PD
-• ESQUIVAR_OBSTACULO: Ejecuta maniobra de evasión
-• BUSCAR_LINEA: Busca la línea después de esquivar
-```
+![Diagrama de Flujo Principal](image-6.png)
 
 ---
 
 ## 🎯 Ejercicios Prácticos Finales
 
 ### Ejercicio 1: Calibración Completa (15 min)
+
 1. Ajustar umbral de detección de obstáculos
 2. Calibrar parámetros Kp y Kd
 3. Optimizar velocidades de esquive
 
 ### Ejercicio 2: Prueba Integral (15 min)
+
 1. Probar en circuito con línea y obstáculos
 2. Verificar transiciones entre estados
 3. Ajustar tiempos de maniobra
 
 ### Ejercicio 3: Depuración y Optimización (15 min)
+
 1. Usar Serial Monitor para depuración
 2. Identificar y corregir problemas
 3. Documentar parámetros finales
@@ -998,6 +647,7 @@ Estados del Robot:
 ## 📚 Recursos Adicionales
 
 ### Comandos Útiles de PlatformIO
+
 ```bash
 # Compilar proyecto
 pio run
@@ -1013,11 +663,13 @@ pio run --target clean
 ```
 
 ### Herramientas de Depuración
+
 - **Serial Monitor**: Monitoreo en tiempo real
 - **Gemini Code Assist**: Sugerencias de código
 - **Breakpoints**: Pausar ejecución (simulación)
 
 ### Parámetros de Configuración Recomendados
+
 ```cpp
 // Control PD
 float Kp = 2.0;        // Respuesta proporcional
@@ -1034,12 +686,14 @@ int MAX_DISTANCE = 200;       // Rango máximo sensor
 ## ✅ Checklist de Finalización
 
 ### Configuración Completada
+
 - [ ] VS Code instalado y configurado
 - [ ] PlatformIO funcional
 - [ ] Gemini Code Assist activo
 - [ ] Proyecto creado correctamente
 
 ### Funcionalidades Implementadas
+
 - [ ] Control de motores funcional
 - [ ] Sensores de línea calibrados
 - [ ] Control PD implementado
@@ -1048,6 +702,7 @@ int MAX_DISTANCE = 200;       // Rango máximo sensor
 - [ ] Máquina de estados operativa
 
 ### Pruebas Realizadas
+
 - [ ] Movimiento básico de motores
 - [ ] Seguimiento de línea recta
 - [ ] Seguimiento en curvas
@@ -1060,19 +715,25 @@ int MAX_DISTANCE = 200;       // Rango máximo sensor
 ## 🔧 Troubleshooting Común
 
 ### Problema: ESP32 no se detecta
+
 **Solución**:
+
 1. Verificar cable USB
 2. Instalar drivers CP210x
 3. Presionar botón BOOT al cargar
 
 ### Problema: Motores no giran
+
 **Solución**:
+
 1. Verificar conexiones L298N
 2. Comprobar alimentación
 3. Revisar lógica de control
 
 ### Problema: Sensores no detectan línea
+
 **Solución**:
+
 1. Ajustar altura sensores
 2. Calibrar umbral de detección
 3. Verificar conexión con microcontrolador
