@@ -20,15 +20,13 @@ Este sistema implementa un robot autónomo capaz de seguir líneas negras sobre 
 - **Microcontrolador**: ESP32 Dev Kit V1 (30 pines)
 - **Control de Motores**: L298N para controlar 2 motores DC
 - **Sensores de Línea**: 6 sensores infrarrojos TCRT5000
-- **Servo Motor**: SG90 para barrido del sensor ultrasónico
-- **Sensor de Distancia**: HC-SR04 ultrasónico
+- **Sensor de Distancia**: HC-SR04 ultrasónico (fijo)
 - **Motores**: 2 motores DC con ruedas
 
 ### Distribución de Pines
 
 ```cpp
-// Servo y Sensor Ultrasónico
-#define SERVO_PIN 18
+// Sensor Ultrasónico
 #define TRIG_PIN 5
 #define ECHO_PIN 4
 
@@ -81,9 +79,9 @@ int sensorWeights[6] = {-20, -10, 0, 0, 10, 20};
 - **Sensores 2 y 3** (centrales): 0 puntos
 
 ### Sistema de Detección de Obstáculos
-- **Servo SG90**: Barre 120° en 8 posiciones (cada 15°)
-- **Ángulos de barrido**: 30°, 45°, 60°, 75°, 90°, 105°, 120°, 135°
+- **Sensor HC-SR04**: Posición fija mirando hacia adelante
 - **Umbral de detección**: 20 cm (configurable)
+- **Rango máximo**: 200 cm
 
 ## Funcionamiento del Sistema
 
@@ -128,24 +126,24 @@ Cuando no se detecta línea, el sistema:
 
 ### Detección de Obstáculos
 
-#### Barrido con Servo
-El servo realiza un barrido continuo registrando distancias:
+#### Lectura Directa del Sensor
+El sensor ultrasónico realiza lecturas directas sin barrido:
 
 ```cpp
-void leerDistanciaConServo() {
-  servoMotor.write(servoAngles[currentServoPos]);
-  delay(100); // Tiempo para movimiento del servo
-  
+bool hayObstaculo() {
   int distance = sonar.ping_cm();
   if (distance == 0) distance = MAX_DISTANCE;
   
-  agregarDistancia(distance);
-  currentServoPos = (currentServoPos + 1) % SERVO_POSITIONS;
+  Serial.print("Distancia: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+  
+  return distance <= OBSTACLE_THRESHOLD;
 }
 ```
 
 #### Decisión de Esquive
-Se activa esquive cuando el promedio de las 8 lecturas es ≤ 20 cm.
+Se activa esquive cuando la lectura actual es ≤ 20 cm.
 
 ### Rutina de Esquive por Derecha
 
@@ -180,17 +178,15 @@ void agregarAlStack(int valor) {
 }
 ```
 
-### Buffer Circular de Distancias
-Almacena las últimas 8 lecturas del sensor ultrasónico:
+### Detección Inmediata de Obstáculos
+Realiza lecturas directas del sensor sin almacenamiento de historial:
 
 ```cpp
-void agregarDistancia(float distancia) {
-  if (distanceReadings.size() < SERVO_POSITIONS) {
-    distanceReadings.push_back(distancia);
-  } else {
-    distanceReadings[distanceReadingIndex] = distancia;
-    distanceReadingIndex = (distanceReadingIndex + 1) % SERVO_POSITIONS;
-  }
+bool hayObstaculo() {
+  int distance = sonar.ping_cm();
+  if (distance == 0) distance = MAX_DISTANCE;
+  
+  return distance <= OBSTACLE_THRESHOLD;
 }
 ```
 
@@ -235,8 +231,7 @@ void controlPD(int centroide) {
 - `controlPD()`: Implementación del controlador
 
 #### obstaculos.cpp
-- `leerDistanciaConServo()`: Barrido y lectura
-- `hayObstaculo()`: Detección de obstáculos
+- `hayObstaculo()`: Detección directa de obstáculos
 - `esquivarObstaculo()`: Rutina de maniobra
 - `buscarLinea()`: Búsqueda post-esquive
 
@@ -260,9 +255,8 @@ float Kp = 2.0;
 float Kd = 1.0;
 float previousError = 0;
 
-// Servo y obstáculos
-int servoAngles[8] = {30, 45, 60, 75, 90, 105, 120, 135};
-std::vector<float> distanceReadings;
+// Detección de obstáculos (sin servo)
+// Variables de servo eliminadas - detección directa
 
 // Esquive
 unsigned long tiempoEsquivar = 0;
@@ -273,7 +267,6 @@ int faseEsquivar = 0;
 
 ### Dependencias Requeridas
 ```cpp
-#include <ESP32Servo.h>  // Control del servo SG90
 #include <NewPing.h>     // Sensor ultrasónico HC-SR04
 #include <vector>        // Contenedores STL
 ```
@@ -285,7 +278,6 @@ platform = espressif32
 board = esp32dev
 framework = arduino
 lib_deps = 
-    ESP32Servo
     NewPing
 ```
 
@@ -309,19 +301,22 @@ float Kd = 1.0;  // Ganancia derivativa
 ### Ventajas del Sistema
 - **Modularidad**: Código organizado en módulos especializados
 - **Robustez**: Manejo de pérdida de línea y obstáculos
-- **Eficiencia**: Uso de buffers circulares y algoritmos optimizados
+- **Eficiencia**: Detección inmediata sin delays de servo
+- **Simplicidad**: Menos componentes móviles y código más limpio
+- **Velocidad**: Respuesta rápida sin esperas de barrido
 - **Configurabilidad**: Parámetros fácilmente ajustables
 
 ### Limitaciones
 - **Esquive fijo**: Solo esquiva por la derecha
-- **Tiempo de barrido**: Delay de 100ms por posición del servo
+- **Campo de visión**: Detección solo hacia adelante (sin barrido lateral)
 - **Dependencia de calibración**: Sensores IR requieren ajuste según superficie
 
 ### Posibles Mejoras
 - Implementar esquive dinámico (izquierda/derecha)
+- Agregar sensores ultrasónicos laterales para mayor cobertura
 - Agregar sensor de color para diferentes tipos de línea
 - Implementar comunicación inalámbrica para monitoreo
-- Optimizar tiempos de barrido del servo
+- Agregar servo para barrido opcional en situaciones complejas
 
 ---
 
