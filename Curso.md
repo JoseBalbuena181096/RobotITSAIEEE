@@ -338,70 +338,45 @@ extern bool sensorValues[6];
          Línea Negra
 ```
 
-<svg width="500" height="300" xmlns="http://www.w3.org/2000/svg">
-  <!-- Fondo -->
-  <rect width="500" height="300" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
-  
-  <!-- Robot (vista superior) -->
-  <rect x="150" y="100" width="200" height="120" fill="#6c757d" stroke="#495057" stroke-width="2" rx="10"/>
-  <text x="250" y="165" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">ROBOT</text>
-  
-  <!-- Sensores TCRT5000 -->
-  <g>
-    <!-- Sensor 0 -->
-    <circle cx="170" cy="240" r="8" fill="#28a745" stroke="#1e7e34" stroke-width="2"/>
-    <text x="170" y="245" text-anchor="middle" fill="white" font-family="Arial" font-size="8" font-weight="bold">S0</text>
-    <text x="170" y="260" text-anchor="middle" fill="#333" font-family="Arial" font-size="10">-5</text>
-    
-    <!-- Sensor 1 -->
-    <circle cx="200" cy="240" r="8" fill="#28a745" stroke="#1e7e34" stroke-width="2"/>
-    <text x="200" y="245" text-anchor="middle" fill="white" font-family="Arial" font-size="8" font-weight="bold">S1</text>
-    <text x="200" y="260" text-anchor="middle" fill="#333" font-family="Arial" font-size="10">-3</text>
-    
-    <!-- Sensor 2 -->
-    <circle cx="230" cy="240" r="8" fill="#28a745" stroke="#1e7e34" stroke-width="2"/>
-    <text x="230" y="245" text-anchor="middle" fill="white" font-family="Arial" font-size="8" font-weight="bold">S2</text>
-    <text x="230" y="260" text-anchor="middle" fill="#333" font-family="Arial" font-size="10">-1</text>
-    
-    <!-- Sensor 3 -->
-    <circle cx="270" cy="240" r="8" fill="#28a745" stroke="#1e7e34" stroke-width="2"/>
-    <text x="270" y="245" text-anchor="middle" fill="white" font-family="Arial" font-size="8" font-weight="bold">S3</text>
-    <text x="270" y="260" text-anchor="middle" fill="#333" font-family="Arial" font-size="10">+1</text>
-    
-    <!-- Sensor 4 -->
-    <circle cx="300" cy="240" r="8" fill="#28a745" stroke="#1e7e34" stroke-width="2"/>
-    <text x="300" y="245" text-anchor="middle" fill="white" font-family="Arial" font-size="8" font-weight="bold">S4</text>
-    <text x="300" y="260" text-anchor="middle" fill="#333" font-family="Arial" font-size="10">+3</text>
-    
-    <!-- Sensor 5 -->
-    <circle cx="330" cy="240" r="8" fill="#28a745" stroke="#1e7e34" stroke-width="2"/>
-    <text x="330" y="245" text-anchor="middle" fill="white" font-family="Arial" font-size="8" font-weight="bold">S5</text>
-    <text x="330" y="260" text-anchor="middle" fill="#333" font-family="Arial" font-size="10">+5</text>
-  </g>
-  
-  <!-- Línea negra -->
-  <rect x="100" y="270" width="300" height="8" fill="#212529" rx="2"/>
-  <text x="250" y="290" text-anchor="middle" fill="#333" font-family="Arial" font-size="12" font-weight="bold">Línea Negra</text>
-  
-  <!-- Flechas de dirección -->
-  <defs>
-    <marker id="arrowdir" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#007bff"/>
-    </marker>
-  </defs>
-  
-  <line x1="250" y1="80" x2="250" y2="50" stroke="#007bff" stroke-width="3" marker-end="url(#arrowdir)"/>
-  <text x="250" y="40" text-anchor="middle" fill="#007bff" font-family="Arial" font-size="12" font-weight="bold">Dirección de Avance</text>
-  
-  <!-- Leyenda de pesos -->
-  <text x="50" y="30" fill="#333" font-family="Arial" font-size="14" font-weight="bold">Pesos de Sensores:</text>
-  <text x="50" y="50" fill="#666" font-family="Arial" font-size="12">Izquierda: -5, -3, -1</text>
-  <text x="50" y="70" fill="#666" font-family="Arial" font-size="12">Derecha: +1, +3, +5</text>
-  
-  <!-- Centroide = 0 (centro) -->
-  <line x1="250" y1="240" x2="250" y2="270" stroke="#dc3545" stroke-width="2" stroke-dasharray="5,5"/>
-  <text x="260" y="255" fill="#dc3545" font-family="Arial" font-size="10" font-weight="bold">Centroide = 0</text>
-</svg>
+**Diagrama de Posicionamiento de Sensores TCRT5000:**
+
+```
+                    ROBOT (Vista Superior)
+                 ┌─────────────────────┐
+                 │                     │
+                 │       ROBOT         │
+                 │                     │
+                 └─────────────────────┘
+                      │ │ │   │ │ │
+                     S0 S1 S2 S3 S4 S5
+                     -5 -3 -1 +1 +3 +5
+                 ═══════════════════════
+                      Línea Negra
+
+    Dirección de Avance: ↑
+
+    Pesos de Sensores:
+    • Izquierda: S0(-5), S1(-3), S2(-1)
+    • Centro: Entre S2 y S3 (Centroide = 0)
+    • Derecha: S3(+1), S4(+3), S5(+5)
+
+    Configuración de Pines:
+    ┌────────┬─────────┬──────────────┐
+    │ Sensor │ GPIO    │ Peso         │
+    ├────────┼─────────┼──────────────┤
+    │ S0     │ GPIO36  │ -5 (Izq)     │
+    │ S1     │ GPIO39  │ -3           │
+    │ S2     │ GPIO34  │ -1           │
+    │ S3     │ GPIO35  │ +1           │
+    │ S4     │ GPIO32  │ +3           │
+    │ S5     │ GPIO23  │ +5 (Der)     │
+    └────────┴─────────┴──────────────┘
+
+    Funcionamiento:
+    • Sensor activo (1): Detecta línea negra
+    • Sensor inactivo (0): Detecta superficie blanca
+    • Centroide = Σ(Peso × Estado) / Σ(Estados activos)
+```
 ```
 ```cpp
 #include "config.h"
@@ -447,19 +422,29 @@ void mostrarSensores() {
 **Diagrama de Bloques del Sistema de Control:**
 
 ```
-┌─────────┐    ┌───┐    ┌──────────┐    ┌─────────┐    ┌─────────┐
-│ REF=0   │───▶│ Σ │───▶│    PD    │───▶│  ROBOT  │───▶│ SENSOR  │
-│(Centro) │    │   │    │ Kp + Kd  │    │ Motores │    │Centroide│
-└─────────┘    └─┬─┘    └──────────┘    └─────────┘    └────┬────┘
-                 ▲                                           │
-                 │                                           │
-                 └───────────────────────────────────────────┘
-                              Retroalimentación
+┌─────────┐   ┌───┐   ┌──────────┐   ┌─────────┐   ┌─────────┐
+│ REF=0   │──▶│ Σ │──▶│    PD    │──▶│  ROBOT  │──▶│ SENSOR  │
+│(Centro) │   │   │   │ Kp + Kd  │   │ Motores │   │Centroide│
+└─────────┘   └─┬─┘   └──────────┘   └─────────┘   └────┬────┘
+                ▲                                        │
+                │                                        │
+                └────────────────────────────────────────┘
+                           Retroalimentación
 
 Flujo de Señales:
 • Error = Referencia - Posición_Actual
 • Corrección = Kp × Error + Kd × (Error - Error_anterior)
 • Velocidades = Velocidad_Base ± Corrección
+
+Parámetros de Control:
+┌─────────────┬─────────┬──────────────────────┐
+│ Parámetro   │ Valor   │ Función              │
+├─────────────┼─────────┼──────────────────────┤
+│ Kp          │ 15.0    │ Respuesta rápida     │
+│ Kd          │ 8.0     │ Estabilidad          │
+│ BASE_SPEED  │ 150     │ Velocidad base       │
+│ Referencia  │ 0       │ Centro de línea      │
+└─────────────┴─────────┴──────────────────────┘
 ```
 
 **Fórmulas del Control PD:**
@@ -543,62 +528,55 @@ NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);
 
 #### 🎯 Diagrama de Detección Ultrasónica
 
-```svg
-<svg width="500" height="300" xmlns="http://www.w3.org/2000/svg">
-  <!-- Fondo -->
-  <rect width="500" height="300" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
-  
-  <!-- Robot -->
-  <rect x="50" y="120" width="80" height="60" fill="#6c757d" stroke="#495057" stroke-width="2" rx="5"/>
-  <text x="90" y="155" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">ROBOT</text>
-  
-  <!-- Sensor HC-SR04 -->
-  <rect x="130" y="140" width="30" height="20" fill="#ffc107" stroke="#e0a800" stroke-width="2" rx="2"/>
-  <text x="145" y="152" text-anchor="middle" fill="black" font-family="Arial" font-size="8" font-weight="bold">HC-SR04</text>
-  
-  <!-- Cono de detección -->
-  <path d="M 160 150 L 350 100 A 50 50 0 0 1 350 200 Z" fill="#007bff" fill-opacity="0.3" stroke="#0056b3" stroke-width="2"/>
-  
-  <!-- Líneas de alcance -->
-  <line x1="160" y1="150" x2="300" y2="150" stroke="#28a745" stroke-width="2" stroke-dasharray="5,5"/>
-  <text x="230" y="140" text-anchor="middle" fill="#28a745" font-family="Arial" font-size="10" font-weight="bold">20 cm (Umbral)</text>
-  
-  <line x1="160" y1="150" x2="400" y2="150" stroke="#dc3545" stroke-width="2" stroke-dasharray="3,3"/>
-  <text x="280" y="170" text-anchor="middle" fill="#dc3545" font-family="Arial" font-size="10" font-weight="bold">200 cm (Máximo)</text>
-  
-  <!-- Obstáculo -->
-  <rect x="280" y="120" width="40" height="60" fill="#6f42c1" stroke="#5a32a3" stroke-width="2" rx="3"/>
-  <text x="300" y="155" text-anchor="middle" fill="white" font-family="Arial" font-size="10" font-weight="bold">OBSTÁCULO</text>
-  
-  <!-- Ondas ultrasónicas -->
-  <g stroke="#007bff" stroke-width="1" fill="none">
-    <path d="M 160 150 Q 200 130 240 150" stroke-dasharray="2,2"/>
-    <path d="M 160 150 Q 200 150 240 150" stroke-dasharray="2,2"/>
-    <path d="M 160 150 Q 200 170 240 150" stroke-dasharray="2,2"/>
-  </g>
-  
-  <!-- Reflexión -->
-  <g stroke="#dc3545" stroke-width="1" fill="none">
-    <path d="M 280 150 Q 240 130 200 150" stroke-dasharray="2,2"/>
-    <path d="M 280 150 Q 240 150 200 150" stroke-dasharray="2,2"/>
-    <path d="M 280 150 Q 240 170 200 150" stroke-dasharray="2,2"/>
-  </g>
-  
-  <!-- Etiquetas -->
-  <text x="250" y="30" text-anchor="middle" fill="#333" font-family="Arial" font-size="16" font-weight="bold">Detección Ultrasónica Fija</text>
-  <text x="200" y="110" text-anchor="middle" fill="#007bff" font-family="Arial" font-size="10">Ondas emitidas</text>
-  <text x="200" y="190" text-anchor="middle" fill="#dc3545" font-family="Arial" font-size="10">Ondas reflejadas</text>
-  
-  <!-- Zona de detección -->
-  <text x="350" y="250" text-anchor="middle" fill="#666" font-family="Arial" font-size="12">Zona de Detección</text>
-  <text x="350" y="265" text-anchor="middle" fill="#666" font-family="Arial" font-size="10">(Campo de visión fijo)</text>
-  
-  <!-- Indicador de distancia -->
-  <line x1="160" y1="200" x2="280" y2="200" stroke="#333" stroke-width="1"/>
-  <line x1="160" y1="195" x2="160" y2="205" stroke="#333" stroke-width="1"/>
-  <line x1="280" y1="195" x2="280" y2="205" stroke="#333" stroke-width="1"/>
-  <text x="220" y="220" text-anchor="middle" fill="#333" font-family="Arial" font-size="10">Distancia medida</text>
-</svg>
+**Sistema de Detección Ultrasónica Fija HC-SR04:**
+
+```
+                    DETECCIÓN ULTRASÓNICA FIJA
+
+    ┌─────────┐    ┌─────────┐                    ┌─────────┐
+    │  ROBOT  │────│ HC-SR04 │)))))))))))))))))))│OBSTÁCULO│
+    │         │    │ (Fijo)  │                    │         │
+    └─────────┘    └─────────┘                    └─────────┘
+                        │                              │
+                        │◄─────── 20 cm ──────────────┤
+                        │        (Umbral)              │
+                        │                              │
+                        │◄────── 200 cm ──────────────┤
+                        │       (Máximo)               │
+
+    Funcionamiento:
+    1. TRIGGER: Envía pulso ultrasónico (10μs)
+    2. ECHO: Recibe eco reflejado del obstáculo
+    3. Cálculo: Distancia = (Tiempo × Velocidad_Sonido) / 2
+    4. Decisión: Si distancia ≤ 20cm → OBSTÁCULO DETECTADO
+
+    Campo de Detección:
+                    ╱─────────────╲
+                   ╱               ╲
+    [ROBOT]───────╱     ZONA DE     ╲
+                 ╱     DETECCIÓN     ╲
+                ╱      (Fijo)        ╲
+               ╱_____________________╲
+
+    Ventajas del Sistema Fijo:
+    • Detección inmediata (sin delays de servo)
+    • Mayor velocidad de respuesta
+    • Menor complejidad de código
+    • Menor consumo energético
+    • Mayor confiabilidad
+
+    Configuración de Pines:
+    ┌─────────┬─────────┬──────────────────┐
+    │ Señal   │ GPIO    │ Función          │
+    ├─────────┼─────────┼──────────────────┤
+    │ TRIGGER │ GPIO5   │ Envío de pulso   │
+    │ ECHO    │ GPIO4   │ Recepción de eco │
+    └─────────┴─────────┴──────────────────┘
+
+    Parámetros:
+    • Umbral de detección: 20 cm
+    • Alcance máximo: 200 cm
+    • Ángulo de detección: ~15° (campo fijo)
 ```
 ```cpp
 void setupObstaculos() {
@@ -621,90 +599,90 @@ bool hayObstaculo() {
 
 #### 🔄 Diagrama de Flujo de Esquive
 
-```svg
-<svg width="600" height="500" xmlns="http://www.w3.org/2000/svg">
-  <!-- Fondo -->
-  <rect width="600" height="500" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
-  
-  <!-- Inicio -->
-  <ellipse cx="300" cy="50" rx="60" ry="25" fill="#28a745" stroke="#1e7e34" stroke-width="2"/>
-  <text x="300" y="57" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">OBSTÁCULO</text>
-  <text x="300" y="72" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">DETECTADO</text>
-  
-  <!-- Fase 0: Giro Izquierda -->
-  <rect x="220" y="100" width="160" height="50" fill="#007bff" stroke="#0056b3" stroke-width="2" rx="5"/>
-  <text x="300" y="120" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">FASE 0</text>
-  <text x="300" y="135" text-anchor="middle" fill="white" font-family="Arial" font-size="11">Giro Izquierda (3s)</text>
-  <text x="300" y="148" text-anchor="middle" fill="white" font-family="Arial" font-size="10">(-150, 150)</text>
-  
-  <!-- Fase 1: Avanzar -->
-  <rect x="220" y="180" width="160" height="50" fill="#6f42c1" stroke="#5a32a3" stroke-width="2" rx="5"/>
-  <text x="300" y="200" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">FASE 1</text>
-  <text x="300" y="215" text-anchor="middle" fill="white" font-family="Arial" font-size="11">Avanzar (5s)</text>
-  <text x="300" y="228" text-anchor="middle" fill="white" font-family="Arial" font-size="10">(150, 150)</text>
-  
-  <!-- Fase 2: Giro Derecha -->
-  <rect x="220" y="260" width="160" height="50" fill="#dc3545" stroke="#c82333" stroke-width="2" rx="5"/>
-  <text x="300" y="280" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">FASE 2</text>
-  <text x="300" y="295" text-anchor="middle" fill="white" font-family="Arial" font-size="11">Giro Derecha (3s)</text>
-  <text x="300" y="308" text-anchor="middle" fill="white" font-family="Arial" font-size="10">(150, -150)</text>
-  
-  <!-- Fase 3: Avanzar -->
-  <rect x="220" y="340" width="160" height="50" fill="#ffc107" stroke="#e0a800" stroke-width="2" rx="5"/>
-  <text x="300" y="360" text-anchor="middle" fill="black" font-family="Arial" font-size="12" font-weight="bold">FASE 3</text>
-  <text x="300" y="375" text-anchor="middle" fill="black" font-family="Arial" font-size="11">Avanzar (3s)</text>
-  <text x="300" y="388" text-anchor="middle" fill="black" font-family="Arial" font-size="10">(150, 150)</text>
-  
-  <!-- Fin -->
-  <ellipse cx="300" cy="440" rx="60" ry="25" fill="#17a2b8" stroke="#138496" stroke-width="2"/>
-  <text x="300" y="447" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">BUSCAR</text>
-  <text x="300" y="462" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">LÍNEA</text>
-  
-  <!-- Flechas -->
-  <defs>
-    <marker id="arrowflow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
-    </marker>
-  </defs>
-  
-  <line x1="300" y1="75" x2="300" y2="100" stroke="#333" stroke-width="2" marker-end="url(#arrowflow)"/>
-  <line x1="300" y1="150" x2="300" y2="180" stroke="#333" stroke-width="2" marker-end="url(#arrowflow)"/>
-  <line x1="300" y1="230" x2="300" y2="260" stroke="#333" stroke-width="2" marker-end="url(#arrowflow)"/>
-  <line x1="300" y1="310" x2="300" y2="340" stroke="#333" stroke-width="2" marker-end="url(#arrowflow)"/>
-  <line x1="300" y1="390" x2="300" y2="415" stroke="#333" stroke-width="2" marker-end="url(#arrowflow)"/>
-  
-  <!-- Trayectoria del robot -->
-  <g transform="translate(450, 50)">
-    <text x="0" y="0" fill="#333" font-family="Arial" font-size="14" font-weight="bold">Trayectoria:</text>
-    
-    <!-- Línea original -->
-    <line x1="0" y1="30" x2="100" y2="30" stroke="#212529" stroke-width="4"/>
-    <text x="50" y="50" text-anchor="middle" fill="#333" font-family="Arial" font-size="10">Línea Original</text>
-    
-    <!-- Obstáculo -->
-    <rect x="40" y="20" width="20" height="20" fill="#6f42c1" stroke="#5a32a3" stroke-width="2"/>
-    
-    <!-- Trayectoria de esquive -->
-    <path d="M 30 30 Q 20 10 10 30 Q 10 50 30 70 Q 50 70 70 50 Q 70 30 80 30" 
-          stroke="#dc3545" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
-    
-    <!-- Puntos de fase -->
-    <circle cx="30" cy="30" r="3" fill="#007bff"/>
-    <circle cx="10" cy="30" r="3" fill="#6f42c1"/>
-    <circle cx="30" cy="70" r="3" fill="#dc3545"/>
-    <circle cx="70" cy="50" r="3" fill="#ffc107"/>
-    <circle cx="80" cy="30" r="3" fill="#17a2b8"/>
-    
-    <text x="0" y="100" fill="#666" font-family="Arial" font-size="9">1. Giro izq</text>
-    <text x="0" y="115" fill="#666" font-family="Arial" font-size="9">2. Avanzar</text>
-    <text x="0" y="130" fill="#666" font-family="Arial" font-size="9">3. Giro der</text>
-    <text x="0" y="145" fill="#666" font-family="Arial" font-size="9">4. Avanzar</text>
-  </g>
-  
-  <!-- Título -->
-  <text x="300" y="25" text-anchor="middle" fill="#333" font-family="Arial" font-size="16" font-weight="bold">Rutina de Esquive por Derecha</text>
-</svg>
 ```
+                    RUTINA DE ESQUIVE POR DERECHA
+
+                        ┌─────────────────┐
+                        │   OBSTÁCULO     │
+                        │   DETECTADO     │
+                        └─────────┬───────┘
+                                  │
+                                  ▼
+                        ┌─────────────────┐
+                        │     FASE 0      │
+                        │ Giro Izquierda  │
+                        │    (3 seg)      │
+                        │  (-150, 150)    │
+                        └─────────┬───────┘
+                                  │
+                                  ▼
+                        ┌─────────────────┐
+                        │     FASE 1      │
+                        │    Avanzar      │
+                        │    (5 seg)      │
+                        │  (150, 150)     │
+                        └─────────┬───────┘
+                                  │
+                                  ▼
+                        ┌─────────────────┐
+                        │     FASE 2      │
+                        │ Giro Derecha    │
+                        │    (3 seg)      │
+                        │  (150, -150)    │
+                        └─────────┬───────┘
+                                  │
+                                  ▼
+                        ┌─────────────────┐
+                        │     FASE 3      │
+                        │    Avanzar      │
+                        │    (3 seg)      │
+                        │  (150, 150)     │
+                        └─────────┬───────┘
+                                  │
+                                  ▼
+                        ┌─────────────────┐
+                        │   BUSCAR        │
+                        │   LÍNEA         │
+                        └─────────────────┘
+
+    Trayectoria del Robot:
+    
+    Línea ────────[■]──────── (■ = Obstáculo)
+    Original      │
+                  │
+                  ▼
+              ┌───┐
+              │ 1 │ Giro izquierda
+              └─┬─┘
+                │
+                ▼
+              ┌───┐
+              │ 2 │ Avanzar (rodear)
+              └─┬─┘
+                │
+                ▼
+              ┌───┐
+              │ 3 │ Giro derecha
+              └─┬─┘
+                │
+                ▼
+              ┌───┐
+              │ 4 │ Avanzar (retornar)
+              └─┬─┘
+                │
+                ▼
+    Línea ──────────────────
+    Retomada
+```
+
+**Parámetros de la Rutina:**
+
+| Fase | Acción | Duración | Motor Izq | Motor Der | Descripción |
+|------|--------|----------|-----------|-----------|-------------|
+| 0 | Giro Izq | 3 seg | -150 | 150 | Alejarse del obstáculo |
+| 1 | Avanzar | 5 seg | 150 | 150 | Rodear el obstáculo |
+| 2 | Giro Der | 3 seg | 150 | -150 | Orientarse hacia la línea |
+| 3 | Avanzar | 3 seg | 150 | 150 | Retornar a la línea |
 ```cpp
 void esquivarObstaculo() {
     unsigned long tiempoActual = millis();
